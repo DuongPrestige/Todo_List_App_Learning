@@ -31,7 +31,19 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-
+  fonts:
+    - family: Lato
+      fonts:
+        Lato-ThinItalic.ttf
+        Lato-Thin.ttf
+        Lato-Regular.ttf
+        Lato-LightItalic.ttf
+        Lato-Light.ttf
+        Lato-Italic.ttf
+        Lato-BoldItalic.ttf
+        Lato-Bold.ttf
+        Lato-Black.ttf
+        Lato-BlackItalic.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
