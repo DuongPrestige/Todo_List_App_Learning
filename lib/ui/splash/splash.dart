@@ -1,10 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_list_app/ui/onboarding/onboarding_page_view.dart';
+import 'package:todo_list_app/ui/welcome/welcome_page.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
+  Future<void> _checkAppState(BuildContext context) async {
+    //Kiem tra xem co kOnboardingCompleted.
+    final isCompleted = await _isOnboardingCompleted();
+    if (isCompleted) {
+      //di chuyen den man hinh welcome
+      if (!context.mounted) {
+        return;
+      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const WelcomePage(
+            isFirstTimeInstallApp: false,
+          ),
+        ),
+      );
+    } else {
+      if (!context.mounted) {
+        return;
+      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OnboardingPageView(),
+        ),
+      );
+    }
+  }
+
+  Future<bool> _isOnboardingCompleted() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final result = prefs.getBool("kOnboardingCompleted");
+      return result ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _checkAppState(context);
     return Scaffold(
       backgroundColor: Color(0xFF121212),
       body: SafeArea(

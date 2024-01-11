@@ -1,6 +1,7 @@
 //Clas cha: Quản lý các page co. di chuyển qua lại giữa các page con.
 
 import "package:flutter/material.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:todo_list_app/ui/welcome/welcome_page.dart";
 import "package:todo_list_app/ultils/enums/onboarding_page_position.dart";
 
@@ -33,6 +34,7 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
               // do nothing
             },
             skipOnPressed: () {
+              _markOnboardingCompleted();
               _goToWelcomePage();
             },
           ),
@@ -45,18 +47,21 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
               _pageController.jumpToPage(0);
             },
             skipOnPressed: () {
+              _markOnboardingCompleted();
               _goToWelcomePage();
             },
           ),
           OnboardingChildPage(
             onboardingPagePosition: OnboardingPagePosition.page3,
             nextOnPressed: () {
+              _markOnboardingCompleted();
               _goToWelcomePage();
             },
             backOnPressed: () {
               _pageController.jumpToPage(1);
             },
             skipOnPressed: () {
+              _markOnboardingCompleted();
               _goToWelcomePage();
             },
           ),
@@ -69,8 +74,20 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const WelcomePage(),
+        builder: (context) => const WelcomePage(
+          isFirstTimeInstallApp: true,
+        ),
       ),
     );
+  }
+
+  Future<void> _markOnboardingCompleted() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool("kOnboardingCompleted", true);
+    } catch (e) {
+      print(e);
+      return;
+    }
   }
 }

@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -31,19 +32,35 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-  fonts:
-    - family: Lato
-      fonts:
-        Lato-ThinItalic.ttf
-        Lato-Thin.ttf
-        Lato-Regular.ttf
-        Lato-LightItalic.ttf
-        Lato-Light.ttf
-        Lato-Italic.ttf
-        Lato-BoldItalic.ttf
-        Lato-Bold.ttf
-        Lato-Black.ttf
-        Lato-BlackItalic.ttf
+#  fonts:
+#    - family: Lato
+#      fonts:
+#        - asset: asset/fonts/Lato-ThinItalic.ttf
+#          weight: 100
+#          style: italic
+#        - asset: asset/fonts/Lato-Thin.ttf
+#          weight: 100
+#        - asset: asset/fonts/Lato-Regular.ttf
+#          weight: 400
+#        - asset: asset/fonts/Lato-LightItalic.ttf
+#          weight: 300
+#          style: italic
+#        - asset: asset/fonts/Lato-Light.ttf
+#          weight: 300
+#        - asset: asset/fonts/Lato-Italic.ttf
+#          style: italic
+#          weight: 300
+#        - asset: asset/fonts/Lato-BoldItalic.ttf
+#          style: italic
+#          weight: 700
+#        - asset: asset/fonts/Lato-Bold.ttf
+#          weight: 700
+#        - asset: asset/fonts/Lato-Black.ttf
+#          weight: 900
+#          style: italic
+#        - asset: asset/fonts/Lato-BlackItalic.ttf
+#          weight: 900
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
