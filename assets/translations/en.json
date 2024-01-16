@@ -1,0 +1,12 @@
+{
+  "common_cancle": "Cancle",
+  "welcome_title": "Welcome to UpTodo",
+  "welcome_desc" : "Please login to your account or create new account to continue",
+  "create_category_page_title" : "Create new category",
+  "create_category_form_catergory_name_label": "Category name:",
+  "create_category_form_catergory_name_placeholder": "Category name",
+  "create_category_form_catergory_icon_lable": "Category icon:",
+  "create_category_form_catergory_icon_placeholder": "Choose icon from library",
+  "create_category_form_catergory_background_color_lable": "Category color:",
+  "create_category_create_button": "Create category"
+}

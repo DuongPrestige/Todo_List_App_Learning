@@ -1,8 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_list_app/ui/splash/splash.dart';
+import 'package:todo_list_app/ui/category/create_or_edit_category.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(EasyLocalization(supportedLocales: [
+    Locale("vi"), //Vietnamese
+    Locale("en"), //English
+  ], path: "assets/translations", child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -16,7 +23,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      localizationsDelegates: context.localizationDelegates,
+      locale: context.locale,
+      supportedLocales: context.supportedLocales,
+      home: const CreateOrEditCategory(),
     );
   }
 }
