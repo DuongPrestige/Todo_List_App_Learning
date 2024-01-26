@@ -3,7 +3,7 @@ import 'package:realm/realm.dart';
 part 'category_real_entity.g.dart';
 
 @RealmModel()
-class $_CategoryRealmEntity {
+class $CategoryRealmEntity {
   @PrimaryKey()
   late ObjectId id;
   late String name;

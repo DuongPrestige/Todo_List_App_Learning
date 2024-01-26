@@ -1,9 +1,10 @@
-import 'dart:js' show context;
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
+import 'package:realm/realm.dart';
+import 'package:todo_list_app/entities/category_real_entity.dart';
+import 'package:todo_list_app/ultils/enums/color_extension.dart';
 
 class CreateOrEditCategory extends StatefulWidget {
   const CreateOrEditCategory({super.key});
@@ -15,12 +16,16 @@ class CreateOrEditCategory extends StatefulWidget {
 class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
   final _nameCategoryTextController = TextEditingController();
   final List<Color> _colorDataSource = [];
-  late Color _colorSelected = Colors.white;
+  late Color _colorSelected = Color(0xFFC9CC41);
+  late Color _iconcolorSelected = Color(0xFF66CC41);
   IconData? _iconSelected;
 
   @override
   void initState() {
     super.initState();
+
+    final stroragePath = Configuration.defaultRealmPath;
+    print(stroragePath);
 
     _colorDataSource.addAll([
       Color(0xFFC9CC41),
@@ -66,6 +71,8 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                 _buildCategoryNameField(),
                 _buildCategoryChooseIconField(),
                 _buidCategoryChooseBackgroundColorField(),
+                _buidCategoryChooseIconAndTextColorField(),
+                _buidCategoryPreview(),
               ],
             ),
           ),
@@ -106,6 +113,9 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                   ),
                 ),
               ),
+              onChanged: (String? value) {
+                setState(() {});
+              },
             ),
           )
         ],
@@ -150,6 +160,113 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     );
   }
 
+  Widget _buidCategoryChooseIconAndTextColorField() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      margin: EdgeInsets.only(top: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitleField(
+              "create_category_form_catergory_icon_text_color_lable".tr()),
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: GestureDetector(
+              onTap: _onChooseCategoryIconTextColor,
+              child: Container(
+                width: 36,
+                height: 36,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(36 / 2),
+                  color: _iconcolorSelected,
+                ),
+              ),
+            ),
+          ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 10),
+          //   width: double.infinity,
+          //   height: 36,
+          //   child: ListView.builder(
+          //     scrollDirection: Axis.horizontal,
+          //     itemBuilder: (context, index) {
+          //       final color = _colorDataSource.elementAt(index);
+          //       final isSelected = _colorSelected == color;
+          //       return GestureDetector(
+          //         onTap: () {
+          //           print("choose color in index $index");
+          //           setState(() {
+          //             _colorSelected = color;
+          //           });
+          //         },
+          //         child: Container(
+          //           width: 36,
+          //           height: 36,
+          //           margin: const EdgeInsets.only(right: 12),
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(36 / 2),
+          //             color: color,
+          //           ),
+          //           child: isSelected
+          //               ? Icon(
+          //                   Icons.check,
+          //                   color: Colors.white,
+          //                   size: 20,
+          //                 )
+          //               : null,
+          //         ),
+          //       );
+          //     },
+          //     itemCount: _colorDataSource.length,
+          //   ),
+          // ),
+        ],
+      ),
+    );
+    //       Container(
+    //         margin: EdgeInsets.only(top: 10),
+    //         width: double.infinity,
+    //         height: 36,
+    //         child: ListView.builder(
+    //           scrollDirection: Axis.horizontal,
+    //           itemBuilder: (context, index) {
+    //             final color = _colorDataSource.elementAt(index);
+    //             final isSelected = _colorSelected == color;
+    //             return GestureDetector(
+    //               onTap: () {
+    //                 print("choose color in index $index");
+    //                 setState(() {
+    //                   _colorSelected = color;
+    //                 });
+    //               },
+    //               child: Container(
+    //                 width: 36,
+    //                 height: 36,
+    //                 margin: const EdgeInsets.only(right: 12),
+    //                 decoration: BoxDecoration(
+    //                   borderRadius: BorderRadius.circular(36 / 2),
+    //                   color: color,
+    //                 ),
+    //                 child: isSelected
+    //                     ? Icon(
+    //                         Icons.check,
+    //                         color: Colors.white,
+    //                         size: 20,
+    //                       )
+    //                     : null,
+    //               ),
+    //             );
+    //           },
+    //           itemCount: _colorDataSource.length,
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
+  }
+
   Widget _buidCategoryChooseBackgroundColorField() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24),
@@ -160,15 +277,18 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         children: [
           _buildTitleField(
               "create_category_form_catergory_background_color_lable".tr()),
-          GestureDetector(
-            onTap: _onChooseCategoryBackgroundColor,
-            child: Container(
-              width: 36,
-              height: 36,
-              margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(36 / 2),
-                color: _colorSelected,
+          Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: GestureDetector(
+              onTap: _onChooseCategoryBackgroundColor,
+              child: Container(
+                width: 36,
+                height: 36,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(36 / 2),
+                  color: _colorSelected,
+                ),
               ),
             ),
           ),
@@ -305,10 +425,61 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     );
   }
 
+  Widget _buidCategoryPreview() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      margin: EdgeInsets.only(top: 20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildTitleField("create_category_form_catergory_preview_lable".tr()),
+          Column(
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                margin: EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: _colorSelected,
+                ),
+                child: Icon(_iconSelected, color: _iconcolorSelected, size: 40),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 5),
+                child: Text(
+                  _nameCategoryTextController.text,
+                  style: TextStyle(fontSize: 18, color: _iconcolorSelected),
+                ),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   void _onHandleCreateCategory() {
     final categoryName = _nameCategoryTextController.text;
-    print(categoryName);
-    //save cac thong tin vao local data
+    if (categoryName.isEmpty || _iconcolorSelected == null) {
+      //do nothing
+      //show thong bao loi len man hinh cho user biet
+      return;
+    }
+
+    //mo realm de cbi ghi du lieu
+    var config = Configuration.local([CategoryRealmEntity.schema]);
+    var realm = Realm(config);
+
+    final backgroundColorHex = _colorSelected.toHex();
+    var category = CategoryRealmEntity(ObjectId(), categoryName,
+        iconCodePoint: _iconSelected?.codePoint,
+        backgroundColorHex: backgroundColorHex,
+        iconColorHex: _iconcolorSelected.toHex());
+    realm.write(() {
+      realm.add(category);
+    });
   }
 
   void _chooseIcon() async {
@@ -324,11 +495,25 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
 
   void _onChooseCategoryBackgroundColor() async {
     showDialog(
-      context: context,
+      context: context as BuildContext,
       builder: (context) {
+        //cach 1
+        // return AlertDialog(
+        //   content: SingleChildScrollView(
+        //     child: ColorPicker(
+        //       pickerColor: _colorSelected,
+        //       onColorChanged: (Color newColor) {
+        //         setState(() {
+        //           _colorSelected = newColor;
+        //         });
+        //       },
+        //     ),
+        //   ),
+        // );
+        //cach 2
         return AlertDialog(
           content: SingleChildScrollView(
-            child: ColorPicker(
+            child: MaterialPicker(
               pickerColor: _colorSelected,
               onColorChanged: (Color newColor) {
                 setState(() {
@@ -338,6 +523,40 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
             ),
           ),
         );
+      },
+    );
+  }
+
+  void _onChooseCategoryIconTextColor() async {
+    showDialog(
+      context: context as BuildContext,
+      builder: (context) {
+        //cach 1
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _iconcolorSelected,
+              onColorChanged: (Color newColor) {
+                setState(() {
+                  _iconcolorSelected = newColor;
+                });
+              },
+            ),
+          ),
+        );
+        //cach 2
+        // return AlertDialog(
+        //   content: SingleChildScrollView(
+        //     child: MaterialPicker(
+        //       pickerColor: _colorSelected,
+        //       onColorChanged: (Color newColor) {
+        //         setState(() {
+        //           _colorSelected = newColor;
+        //         });
+        //       },
+        //     ),
+        //   ),
+        // );
       },
     );
   }

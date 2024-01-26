@@ -7,9 +7,9 @@ part of 'category_real_entity.dart';
 // **************************************************************************
 
 // ignore_for_file: type=lint
-class _CategoryRealmEntity extends $_CategoryRealmEntity
+class CategoryRealmEntity extends $CategoryRealmEntity
     with RealmEntity, RealmObjectBase, RealmObject {
-  _CategoryRealmEntity(
+  CategoryRealmEntity(
     ObjectId id,
     String name, {
     int? iconCodePoint,
@@ -23,7 +23,7 @@ class _CategoryRealmEntity extends $_CategoryRealmEntity
     RealmObjectBase.set(this, 'iconColorHex', iconColorHex);
   }
 
-  _CategoryRealmEntity._();
+  CategoryRealmEntity._();
 
   @override
   ObjectId get id => RealmObjectBase.get<ObjectId>(this, 'id') as ObjectId;
@@ -57,19 +57,19 @@ class _CategoryRealmEntity extends $_CategoryRealmEntity
       RealmObjectBase.set(this, 'iconColorHex', value);
 
   @override
-  Stream<RealmObjectChanges<_CategoryRealmEntity>> get changes =>
-      RealmObjectBase.getChanges<_CategoryRealmEntity>(this);
+  Stream<RealmObjectChanges<CategoryRealmEntity>> get changes =>
+      RealmObjectBase.getChanges<CategoryRealmEntity>(this);
 
   @override
-  _CategoryRealmEntity freeze() =>
-      RealmObjectBase.freezeObject<_CategoryRealmEntity>(this);
+  CategoryRealmEntity freeze() =>
+      RealmObjectBase.freezeObject<CategoryRealmEntity>(this);
 
   static SchemaObject get schema => _schema ??= _initSchema();
   static SchemaObject? _schema;
   static SchemaObject _initSchema() {
-    RealmObjectBase.registerFactory(_CategoryRealmEntity._);
+    RealmObjectBase.registerFactory(CategoryRealmEntity._);
     return const SchemaObject(
-        ObjectType.realmObject, _CategoryRealmEntity, '_CategoryRealmEntity', [
+        ObjectType.realmObject, CategoryRealmEntity, 'CategoryRealmEntity', [
       SchemaProperty('id', RealmPropertyType.objectid, primaryKey: true),
       SchemaProperty('name', RealmPropertyType.string),
       SchemaProperty('iconCodePoint', RealmPropertyType.int, optional: true),

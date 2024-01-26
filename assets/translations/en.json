@@ -8,5 +8,8 @@
   "create_category_form_catergory_icon_lable": "Category icon:",
   "create_category_form_catergory_icon_placeholder": "Choose icon from library",
   "create_category_form_catergory_background_color_lable": "Category color:",
+  "create_category_form_catergory_icon_text_color_lable": "Category icon & text color:",
+  "create_category_form_catergory_preview_lable": "Category preview:",
+
   "create_category_create_button": "Create category"
 }
