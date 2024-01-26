@@ -1,5 +1,9 @@
+import 'dart:js' show context;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 
 class CreateOrEditCategory extends StatefulWidget {
   const CreateOrEditCategory({super.key});
@@ -11,7 +15,8 @@ class CreateOrEditCategory extends StatefulWidget {
 class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
   final _nameCategoryTextController = TextEditingController();
   final List<Color> _colorDataSource = [];
-  Color? colorSelected;
+  late Color _colorSelected = Colors.white;
+  IconData? _iconSelected;
 
   @override
   void initState() {
@@ -118,9 +123,7 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         children: [
           _buildTitleField("create_category_form_catergory_icon_lable".tr()),
           GestureDetector(
-            onTap: () {
-              print("Hello: Chon icon");
-            },
+            onTap: _chooseIcon,
             child: Container(
               margin: EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
@@ -129,10 +132,16 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Text(
-                  "create_category_form_catergory_icon_placeholder",
-                  style: TextStyle(fontSize: 12, color: Colors.white),
-                ).tr(),
+                child: _iconSelected != null
+                    ? Icon(
+                        _iconSelected,
+                        color: Colors.white,
+                        size: 26,
+                      )
+                    : const Text(
+                        "create_category_form_catergory_icon_placeholder",
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                      ).tr(),
               ),
             ),
           )
@@ -151,46 +160,98 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         children: [
           _buildTitleField(
               "create_category_form_catergory_background_color_lable".tr()),
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            width: double.infinity,
-            height: 36,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final color = _colorDataSource.elementAt(index);
-                final isSelected = colorSelected == color;
-                return GestureDetector(
-                  onTap: () {
-                    print("choose color in index $index");
-                    setState(() {
-                      colorSelected = color;
-                    });
-                  },
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    margin: const EdgeInsets.only(right: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(36 / 2),
-                      color: color,
-                    ),
-                    child: isSelected
-                        ? Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 20,
-                          )
-                        : null,
-                  ),
-                );
-              },
-              itemCount: _colorDataSource.length,
+          GestureDetector(
+            onTap: _onChooseCategoryBackgroundColor,
+            child: Container(
+              width: 36,
+              height: 36,
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(36 / 2),
+                color: _colorSelected,
+              ),
             ),
           ),
+          // Container(
+          //   margin: EdgeInsets.only(top: 10),
+          //   width: double.infinity,
+          //   height: 36,
+          //   child: ListView.builder(
+          //     scrollDirection: Axis.horizontal,
+          //     itemBuilder: (context, index) {
+          //       final color = _colorDataSource.elementAt(index);
+          //       final isSelected = _colorSelected == color;
+          //       return GestureDetector(
+          //         onTap: () {
+          //           print("choose color in index $index");
+          //           setState(() {
+          //             _colorSelected = color;
+          //           });
+          //         },
+          //         child: Container(
+          //           width: 36,
+          //           height: 36,
+          //           margin: const EdgeInsets.only(right: 12),
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(36 / 2),
+          //             color: color,
+          //           ),
+          //           child: isSelected
+          //               ? Icon(
+          //                   Icons.check,
+          //                   color: Colors.white,
+          //                   size: 20,
+          //                 )
+          //               : null,
+          //         ),
+          //       );
+          //     },
+          //     itemCount: _colorDataSource.length,
+          //   ),
+          // ),
         ],
       ),
     );
+    //       Container(
+    //         margin: EdgeInsets.only(top: 10),
+    //         width: double.infinity,
+    //         height: 36,
+    //         child: ListView.builder(
+    //           scrollDirection: Axis.horizontal,
+    //           itemBuilder: (context, index) {
+    //             final color = _colorDataSource.elementAt(index);
+    //             final isSelected = _colorSelected == color;
+    //             return GestureDetector(
+    //               onTap: () {
+    //                 print("choose color in index $index");
+    //                 setState(() {
+    //                   _colorSelected = color;
+    //                 });
+    //               },
+    //               child: Container(
+    //                 width: 36,
+    //                 height: 36,
+    //                 margin: const EdgeInsets.only(right: 12),
+    //                 decoration: BoxDecoration(
+    //                   borderRadius: BorderRadius.circular(36 / 2),
+    //                   color: color,
+    //                 ),
+    //                 child: isSelected
+    //                     ? Icon(
+    //                         Icons.check,
+    //                         color: Colors.white,
+    //                         size: 20,
+    //                       )
+    //                     : null,
+    //               ),
+    //             );
+    //           },
+    //           itemCount: _colorDataSource.length,
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   Widget _buildTitleField(String titleLable) {
@@ -248,5 +309,36 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     final categoryName = _nameCategoryTextController.text;
     print(categoryName);
     //save cac thong tin vao local data
+  }
+
+  void _chooseIcon() async {
+    IconData? icon = await FlutterIconPicker.showIconPicker(
+        context as BuildContext,
+        iconPackModes: [
+          IconPack.material,
+        ]);
+    setState(() {
+      _iconSelected = icon;
+    });
+  }
+
+  void _onChooseCategoryBackgroundColor() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _colorSelected,
+              onColorChanged: (Color newColor) {
+                setState(() {
+                  _colorSelected = newColor;
+                });
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 }

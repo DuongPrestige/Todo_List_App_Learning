@@ -17,6 +17,11 @@ dependencies:
 
   easy_localization: ^3.0.3
 
+  realm: ^1.7.0
+
+  flutter_iconpicker: ^3.2.4
+  flutter_colorpicker: ^1.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
