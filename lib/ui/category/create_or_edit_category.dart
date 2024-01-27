@@ -25,8 +25,8 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
   void initState() {
     super.initState();
 
-    final stroragePath = Configuration.defaultRealmPath;
-    print("Đường dẫn của default.realm:" + stroragePath);
+    // final stroragePath = Configuration.defaultRealmPath;
+    // print("Đường dẫn của default.realm:" + stroragePath);
 
     _colorDataSource.addAll([
       Color(0xFFC9CC41),
