@@ -14,6 +14,8 @@
   "create_task_form_name_label": "Add Task",
   "create_task_form_name_place": "Enter task name here",
   "create_task_form_desc_label": "Description",
-  "create_task_form_desc_place": "Enter task description here"
+  "create_task_form_desc_place": "Enter task description here",
+  "create_list_page_title": "Choose category",
+  "create_list_add_category_button": "Add category"
 
 }

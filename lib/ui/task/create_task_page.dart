@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../category/category_list_page.dart';
+
 class CreateTaskPage extends StatefulWidget {
   const CreateTaskPage({super.key});
 
@@ -151,7 +153,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: _showDialogChooseCategory,
                   icon: Image.asset(
                     "assets/images/tag.png",
                     width: 24,
@@ -183,6 +185,15 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showDialogChooseCategory() {
+    showGeneralDialog(
+      context: context,
+      pageBuilder: (_, __, ___) {
+        return CategoryListPage();
+      },
     );
   }
 }
