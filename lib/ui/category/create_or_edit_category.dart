@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import 'package:realm/realm.dart';
-import 'package:todo_list_app/entities/category_real_entity.dart';
 import 'package:todo_list_app/ultils/enums/color_extension.dart';
+
+import '../../entities/category_real_entity.dart';
 
 class CreateOrEditCategory extends StatefulWidget {
   const CreateOrEditCategory({super.key});
@@ -25,7 +26,7 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     super.initState();
 
     final stroragePath = Configuration.defaultRealmPath;
-    print(stroragePath);
+    print("Đường dẫn của default.realm:" + stroragePath);
 
     _colorDataSource.addAll([
       Color(0xFFC9CC41),
@@ -460,26 +461,72 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     );
   }
 
-  void _onHandleCreateCategory() {
-    final categoryName = _nameCategoryTextController.text;
-    if (categoryName.isEmpty || _iconcolorSelected == null) {
-      //do nothing
-      //show thong bao loi len man hinh cho user biet
-      return;
+  void _onHandleCreateCategory() async {
+    try {
+      final categoryName = _nameCategoryTextController.text;
+      if (categoryName.isEmpty) {
+        //do nothing
+        //show thong bao loi len man hinh cho user biet
+        _showAlert("Validation", "Category name is required");
+
+        return;
+      }
+      if (_iconSelected == null) {
+        //do nothing
+        //show thong bao loi len man hinh cho user biet
+        _showAlert("Validation", "Category icon is required");
+
+        return;
+      }
+
+      //mo realm de cbi ghi du lieu
+      var config = Configuration.local([CategoryRealmEntity.schema]);
+      var realm = Realm(config);
+
+      //luu du lieu vao realm
+
+      final backgroundColorHex = _colorSelected.toHex();
+      var category = CategoryRealmEntity(ObjectId(), categoryName,
+          iconCodePoint: _iconSelected?.codePoint,
+          backgroundColorHex: backgroundColorHex,
+          iconColorHex: _iconcolorSelected.toHex());
+
+      await realm.writeAsync(() {
+        realm.add(category);
+      });
+
+      _nameCategoryTextController.text = "";
+      _colorSelected = Color(0xFFC9CC41);
+      _iconcolorSelected = Color(0xFF66CC41);
+      _iconSelected = null;
+      setState(() {});
+
+      //show alert to user
+      _showAlert("Succesfully", "Create category success!");
+    } catch (e) {
+      print(e);
+      _showAlert("Failure", "Create category failure!");
     }
+  }
 
-    //mo realm de cbi ghi du lieu
-    var config = Configuration.local([CategoryRealmEntity.schema]);
-    var realm = Realm(config);
-
-    final backgroundColorHex = _colorSelected.toHex();
-    var category = CategoryRealmEntity(ObjectId(), categoryName,
-        iconCodePoint: _iconSelected?.codePoint,
-        backgroundColorHex: backgroundColorHex,
-        iconColorHex: _iconcolorSelected.toHex());
-    realm.write(() {
-      realm.add(category);
-    });
+  void _showAlert(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("OK"))
+          ],
+        );
+      },
+    );
   }
 
   void _chooseIcon() async {
@@ -515,10 +562,12 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
           content: SingleChildScrollView(
             child: MaterialPicker(
               pickerColor: _colorSelected,
+              enableLabel: true,
               onColorChanged: (Color newColor) {
                 setState(() {
                   _colorSelected = newColor;
                 });
+                Navigator.pop(context);
               },
             ),
           ),
@@ -534,12 +583,14 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         //cach 1
         return AlertDialog(
           content: SingleChildScrollView(
-            child: ColorPicker(
+            child: MaterialPicker(
               pickerColor: _iconcolorSelected,
+              enableLabel: true,
               onColorChanged: (Color newColor) {
                 setState(() {
                   _iconcolorSelected = newColor;
                 });
+                Navigator.pop(context);
               },
             ),
           ),
