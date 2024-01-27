@@ -8,7 +8,8 @@ import 'package:todo_list_app/ultils/enums/color_extension.dart';
 import '../../entities/category_real_entity.dart';
 
 class CreateOrEditCategory extends StatefulWidget {
-  const CreateOrEditCategory({super.key});
+  final String? categoryId;
+  const CreateOrEditCategory({super.key, this.categoryId});
 
   @override
   State<CreateOrEditCategory> createState() => _CreateOrEditCategoryState();
@@ -17,9 +18,12 @@ class CreateOrEditCategory extends StatefulWidget {
 class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
   final _nameCategoryTextController = TextEditingController();
   final List<Color> _colorDataSource = [];
-  late Color _colorSelected = Color(0xFFC9CC41);
+  late Color _backgroundColorSelected = Color(0xFFC9CC41);
   late Color _iconcolorSelected = Color(0xFF66CC41);
   IconData? _iconSelected;
+  bool get isEdit {
+    return widget.categoryId != null;
+  }
 
   @override
   void initState() {
@@ -28,16 +32,11 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
     // final stroragePath = Configuration.defaultRealmPath;
     // print("Đường dẫn của default.realm:" + stroragePath);
 
-    _colorDataSource.addAll([
-      Color(0xFFC9CC41),
-      Color(0xFF66CC41),
-      Color(0xFF41CCA7),
-      Color(0xFF4181CC),
-      Color(0xFF41A2CC),
-      Color(0xFFCC8441),
-      Color(0xFF9741CC),
-      Color(0xFFCC4173),
-    ]);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (isEdit) {
+        _findCategory(widget.categoryId!);
+      }
+    });
   }
 
   @override
@@ -48,8 +47,10 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         title: Text(
-          "create_category_page_title",
-          style: TextStyle(
+          isEdit
+              ? "edit_category_category_button"
+              : "create_category_page_title",
+          style: const TextStyle(
               fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
         ).tr(),
       ),
@@ -288,7 +289,7 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(36 / 2),
-                  color: _colorSelected,
+                  color: _backgroundColorSelected,
                 ),
               ),
             ),
@@ -405,7 +406,12 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
           Spacer(),
           ElevatedButton(
               onPressed: () {
-                _onHandleCreateCategory();
+                if (isEdit) {
+                  _editCategory();
+                } else {
+                  _onHandleCreateCategory();
+                }
+                ;
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF8875FF),
@@ -413,7 +419,9 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                     borderRadius: BorderRadius.circular(4),
                   )),
               child: Text(
-                "create_category_create_button",
+                isEdit
+                    ? "edit_category_edit_button"
+                    : "create_category_create_button",
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: "Lato",
@@ -443,7 +451,7 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
                 margin: EdgeInsets.only(top: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: _colorSelected,
+                  color: _backgroundColorSelected,
                 ),
                 child: Icon(_iconSelected, color: _iconcolorSelected, size: 40),
               ),
@@ -485,7 +493,7 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
 
       //luu du lieu vao realm
 
-      final backgroundColorHex = _colorSelected.toHex();
+      final backgroundColorHex = _backgroundColorSelected.toHex();
       var category = CategoryRealmEntity(ObjectId(), categoryName,
           iconCodePoint: _iconSelected?.codePoint,
           backgroundColorHex: backgroundColorHex,
@@ -496,21 +504,24 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
       });
 
       _nameCategoryTextController.text = "";
-      _colorSelected = Color(0xFFC9CC41);
+      _backgroundColorSelected = Color(0xFFC9CC41);
       _iconcolorSelected = Color(0xFF66CC41);
       _iconSelected = null;
       setState(() {});
 
       //show alert to user
       _showAlert("Succesfully", "Create category success!");
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     } catch (e) {
       print(e);
       _showAlert("Failure", "Create category failure!");
     }
   }
 
-  void _showAlert(String title, String message) {
-    showDialog(
+  Future<void> _showAlert(String title, String message) async {
+    await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -561,11 +572,11 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         return AlertDialog(
           content: SingleChildScrollView(
             child: MaterialPicker(
-              pickerColor: _colorSelected,
+              pickerColor: _backgroundColorSelected,
               enableLabel: true,
               onColorChanged: (Color newColor) {
                 setState(() {
-                  _colorSelected = newColor;
+                  _backgroundColorSelected = newColor;
                 });
                 Navigator.pop(context);
               },
@@ -610,5 +621,85 @@ class _CreateOrEditCategoryState extends State<CreateOrEditCategory> {
         // );
       },
     );
+  }
+
+  void _findCategory(String id) {
+    final config = Configuration.local([CategoryRealmEntity.schema]);
+    final realm = Realm(config);
+
+    final category =
+        realm.find<CategoryRealmEntity>(ObjectId.fromHexString(id));
+    if (category == null) {
+      return;
+    }
+
+    _nameCategoryTextController.text = category.name;
+    if (category.iconCodePoint != null) {
+      _iconSelected =
+          IconData(category.iconCodePoint!, fontFamily: "MaterialIcons");
+    }
+    if (category.backgroundColorHex != null) {
+      _backgroundColorSelected = HexColorString(category.backgroundColorHex!);
+    }
+    if (category.backgroundColorHex != null) {
+      _iconcolorSelected = HexColorString(category.iconColorHex!);
+    }
+    setState(() {});
+  }
+
+  Future<void> _editCategory() async {
+    try {
+      final categoryName = _nameCategoryTextController.text;
+      if (categoryName.isEmpty) {
+        //do nothing
+        //show thong bao loi len man hinh cho user biet
+        _showAlert("Validation", "Category name is required");
+
+        return;
+      }
+      if (_iconSelected == null) {
+        //do nothing
+        //show thong bao loi len man hinh cho user biet
+        _showAlert("Validation", "Category icon is required");
+
+        return;
+      }
+
+      //mo realm de cbi ghi du lieu
+      var config = Configuration.local([CategoryRealmEntity.schema]);
+      var realm = Realm(config);
+
+      final category = realm.find<CategoryRealmEntity>(
+          ObjectId.fromHexString(widget.categoryId!));
+      if (category == null) {
+        return;
+      }
+
+      //luu du lieu vao realm
+
+      final backgroundColorHex = _backgroundColorSelected.toHex();
+
+      await realm.writeAsync(() {
+        category.name = categoryName;
+        category.iconCodePoint = _iconSelected?.codePoint;
+        category.backgroundColorHex = _backgroundColorSelected.toHex();
+        category.iconColorHex = _iconcolorSelected.toHex();
+      });
+
+      _nameCategoryTextController.text = "";
+      _backgroundColorSelected = Color(0xFFC9CC41);
+      _iconcolorSelected = Color(0xFF66CC41);
+      _iconSelected = null;
+      setState(() {});
+
+      //show alert to user
+      await _showAlert("Succesfully", "Edit category success!");
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print(e);
+      _showAlert("Failure", "Edit category failure!");
+    }
   }
 }

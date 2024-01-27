@@ -16,6 +16,8 @@
   "create_task_form_desc_label": "Description",
   "create_task_form_desc_place": "Enter task description here",
   "create_list_page_title": "Choose category",
-  "create_list_add_category_button": "Add category"
-
+  "create_list_add_category_button": "Add category",
+  "create_list_edit_category_button": "Edit category",
+  "edit_category_category_button": "Edit category",
+  "edit_category_edit_button": "Edit category"
 }
