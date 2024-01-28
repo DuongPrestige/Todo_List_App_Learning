@@ -16,6 +16,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   final _nameTaskTextController = TextEditingController();
   final _descTaskTextController = TextEditingController();
   CategoryModel? _categorySelected;
+  DateTime? _taskDateTimeSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +40,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
         children: [
           _buildTaskNameField(),
           _buildTaskDescField(),
+          if (_taskDateTimeSelected != null) _buildTaskDateTime(),
           if (_categorySelected != null) _buildTaskCategory(),
           _buildTaskActionField(),
         ],
@@ -159,6 +161,36 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     );
   }
 
+  Widget _buildTaskDateTime() {
+    return Container(
+      margin: EdgeInsets.only(top: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "Task time:",
+            style: TextStyle(
+              fontSize: 18,
+              color: Color(0xFFAFAFAF),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 10),
+            child: Text(
+              DateFormat("dd-MM-yyyy HH:mm").format(_taskDateTimeSelected!),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFAFAFAF),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _buildGridCategoryItem(CategoryModel category) {
     return Column(
       children: [
@@ -243,7 +275,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: _selectTaskTime,
                   icon: Image.asset(
                     "assets/images/timer.png",
                     width: 24,
@@ -323,5 +355,53 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
     } else {
       //do nothing
     }
+  }
+
+  void _selectTaskTime() async {
+    final date = await showDatePicker(
+        context: context,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(
+          const Duration(days: 365),
+        ),
+        builder: (context, child) {
+          return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.dark(
+                  primary: Color(0xFF8687e7),
+                  onSurface: Colors.white,
+                ),
+              ),
+              child: child!);
+        });
+    if (date == null) {
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (context, child) {
+          return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.dark(
+                  primary: Color(0xFF8687e7),
+                  onSurface: Colors.white,
+                ),
+              ),
+              child: child!);
+        });
+
+    if (time == null) {
+      return;
+    }
+
+    final dateTimeSelected =
+        date.copyWith(hour: time.hour, minute: time.minute, second: 0);
+    setState(() {
+      _taskDateTimeSelected = dateTimeSelected;
+    });
   }
 }
