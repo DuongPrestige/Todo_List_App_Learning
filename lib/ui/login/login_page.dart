@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 
 import '../Register/register_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formkey = GlobalKey<FormState>();
+  var _autoValidateMode = AutovalidateMode.disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -61,19 +69,21 @@ class LoginPage extends StatelessWidget {
 
   Widget _buildFormLogin() {
     return Form(
+        key: _formkey,
+        autovalidateMode: _autoValidateMode,
         child: Container(
-      margin: EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildUsernameField(),
-          SizedBox(height: 25),
-          _buildPasswordField(),
-          _buildLoginButton(),
-        ],
-      ),
-    ));
+          margin: EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildUsernameField(),
+              SizedBox(height: 25),
+              _buildPasswordField(),
+              _buildLoginButton(),
+            ],
+          ),
+        ));
   }
 
   Widget _buildUsernameField() {
@@ -105,6 +115,20 @@ class LoginPage extends StatelessWidget {
               fillColor: Color(0xFF1D1D1D),
               filled: true,
             ),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Email is required";
+              }
+
+              final bool emailValid = RegExp(
+                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  .hasMatch(value);
+              if (emailValid) {
+                return null;
+              } else {
+                return "Email khong hop le!";
+              }
+            },
             style: TextStyle(
               color: Colors.white,
               fontFamily: "Lato",
@@ -145,6 +169,14 @@ class LoginPage extends StatelessWidget {
               fillColor: Color(0xFF1D1D1D),
               filled: true,
             ),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Password khong the de trong";
+              }
+              if (value.length < 6) {
+                return "Password phai tu 6 ky tu tro len";
+              }
+            },
             style: TextStyle(
               color: Colors.white,
               fontFamily: "Lato",
@@ -163,7 +195,7 @@ class LoginPage extends StatelessWidget {
       height: 48,
       margin: EdgeInsets.only(top: 70),
       child: ElevatedButton(
-        onPressed: () {}, // muon disable thi tra ve null
+        onPressed: _onHandleLoginSubmit, // muon disable thi tra ve null
         style: ElevatedButton.styleFrom(
             backgroundColor: Color(0xFF8875FF),
             shape: RoundedRectangleBorder(
@@ -356,5 +388,18 @@ class LoginPage extends StatelessWidget {
       context,
       MaterialPageRoute(builder: (context) => const RegisterPage()),
     );
+  }
+
+  void _onHandleLoginSubmit() {
+    if (_autoValidateMode == AutovalidateMode.disabled)
+      setState(() {
+        _autoValidateMode = AutovalidateMode.always;
+      });
+
+    final isValid = _formkey.currentState?.validate() ?? false;
+    if (isValid) {
+    } else {
+      //do nothing
+    }
   }
 }
