@@ -199,7 +199,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFAFAFAF),
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -232,7 +232,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFAFAFAF),
+                color: Colors.white,
               ),
             ),
           )
